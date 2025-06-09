@@ -60,10 +60,8 @@ See the full architecture diagram above: ![architecture.png](images/architecture
 3. **Deploy the stack:**
 
    ```bash
-   cdk deploy --context github_repo_url=https://github.com/your/repo.git
+   cdk deploy --context github_repo_url=https://github.com/eugene-sew/gtp_lampstack_lab_app.git
    ```
-
-   Replace the URL with your PHP app repo if different.
 
 4. **Access your application:**
 
