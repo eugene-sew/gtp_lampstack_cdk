@@ -168,11 +168,21 @@ class LampStackArchitectureStack(Stack):
         user_data = ec2.UserData.for_linux()
         user_data.add_commands(
             "yum update -y",  # Amazon Linux 2
-            "yum install -y httpd mariadb-server php php-mysqlnd git",
+            # PHP 8.0 installation
+            "amazon-linux-extras | grep php",  # Check available PHP versions
+            "sudo yum remove php* -y",  # Remove existing PHP
+            "sudo yum clean all",
+            "sudo amazon-linux-extras enable php8.0",  # Enable PHP 8.0
+            "sudo yum clean metadata",
+            "sudo yum install -q -y php-cli php-fpm php-opcache php-common php-mysqlnd httpd mariadb-server git",
+            # Start and enable services
             "systemctl start httpd",
             "systemctl enable httpd",
             "systemctl start mariadb",
             "systemctl enable mariadb",
+            # Output PHP version for verification
+            "echo 'PHP version installed:' > /var/www/html/php-version.txt",
+            "php -v >> /var/www/html/php-version.txt",
             # Clone the GitHub repository if provided
             f"if [ ! -z '{self.github_repo_url}' ]; then",
             f"  git clone {self.github_repo_url} /var/www/html/",

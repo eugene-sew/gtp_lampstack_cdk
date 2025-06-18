@@ -1,0 +1,389 @@
+digraph "Diagram" {
+  splines = "ortho";
+  pad = "1.0";
+  nodesep = "0.60";
+  ranksep = "0.75";
+  fontname = "Sans-Serif";
+  fontsize = "15";
+  dpi = "200";
+  rankdir = "BT";
+  compound = "true";
+  fontcolor = "#222222";
+  edge [
+    color = "#D5871488",
+    penwidth = 2,
+    arrowhead = "dot",
+    arrowtail = "dot",
+  ];
+  node [
+    shape = "box",
+    style = "rounded",
+    fixedsize = true,
+    width = 1.7,
+    height = 1.7,
+    labelloc = "c",
+    imagescale = true,
+    fontname = "Sans-Serif",
+    fontsize = 8,
+    margin = 8,
+  ];
+  subgraph "LampStackArchitectureStack" {
+    subgraph "cluster-SubGraph.LampStackArchitectureStack" {
+      graph [
+        label = "LampStackArchitectureStack",
+        labelloc = "b",
+        labeljust = "l",
+        margin = "10",
+        fontsize = "16",
+        penwidth = "2",
+        pencolor = "#888888",
+        style = "filled,rounded",
+        fillcolor = "#e4e4e4",
+      ];
+      "LampStackArchitectureStack/LampVPC" [
+        label = " LampVPC",
+        fontsize = 12,
+        image = "/Users/admin/.nvm/versions/node/v22.12.0/lib/node_modules/cdk-dia/icons/aws/Service/Arch_Networking-Content/64/Arch_Amazon-Virtual-Private-Cloud_64@5x.png",
+        imagescale = "true",
+        imagepos = "tc",
+        penwidth = "0",
+        shape = "node",
+        fixedsize = "true",
+        labelloc = "b",
+        width = 2,
+        height = 2.266,
+      ];
+      "LampStackArchitectureStack/LAMP_LAB_LoadBalancerSG" [
+        label = " LAMP LAB\nLoadBalancerSG",
+        fontsize = 12,
+        image = "/Users/admin/.nvm/versions/node/v22.12.0/lib/node_modules/cdk-dia/icons/aws/security_group.png",
+        imagescale = "true",
+        imagepos = "tc",
+        penwidth = "0",
+        shape = "node",
+        fixedsize = "true",
+        labelloc = "b",
+        width = 2,
+        height = 2.4819999999999998,
+      ];
+      "LampStackArchitectureStack/LAMP_LAB_WebServerSG" [
+        label = " LAMP_LAB_WebServerSG",
+        fontsize = 12,
+        image = "/Users/admin/.nvm/versions/node/v22.12.0/lib/node_modules/cdk-dia/icons/aws/security_group.png",
+        imagescale = "true",
+        imagepos = "tc",
+        penwidth = "0",
+        shape = "node",
+        fixedsize = "true",
+        labelloc = "b",
+        width = 2,
+        height = 2.266,
+      ];
+      "LampStackArchitectureStack/LAMP_LAB_DatabaseSG" [
+        label = " LAMP_LAB_DatabaseSG",
+        fontsize = 12,
+        image = "/Users/admin/.nvm/versions/node/v22.12.0/lib/node_modules/cdk-dia/icons/aws/security_group.png",
+        imagescale = "true",
+        imagepos = "tc",
+        penwidth = "0",
+        shape = "node",
+        fixedsize = "true",
+        labelloc = "b",
+        width = 2,
+        height = 2.266,
+      ];
+      "LampStackArchitectureStack/LAMP_LAB_Database" [
+        label = " LAMP_LAB_Database",
+        fontsize = 12,
+        image = "/Users/admin/.nvm/versions/node/v22.12.0/lib/node_modules/cdk-dia/icons/aws/Resource/Res_Compute/Res_48_Dark/Res_Amazon-EC2_T3-Instance_48_Dark.png",
+        imagescale = "true",
+        imagepos = "tc",
+        penwidth = "0",
+        shape = "node",
+        fixedsize = "true",
+        labelloc = "b",
+        width = 2,
+        height = 2.266,
+      ];
+      "LampStackArchitectureStack/LAMP_LAB_LoadBalancer" [
+        label = "\nLAMP_LAB_LoadBalancer",
+        fontsize = 12,
+        image = "/Users/admin/.nvm/versions/node/v22.12.0/lib/node_modules/cdk-dia/icons/aws/Service/Arch_Networking-Content/64/Arch_Elastic-Load-Balancing_64@5x.png",
+        imagescale = "true",
+        imagepos = "tc",
+        penwidth = "0",
+        shape = "node",
+        fixedsize = "true",
+        labelloc = "b",
+        width = 2,
+        height = 2.4819999999999998,
+      ];
+      "LampStackArchitectureStack/LAMP_LAB_AlarmTopic" [
+        label = " LAMP_LAB_AlarmTopic",
+        fontsize = 12,
+        image = "/Users/admin/.nvm/versions/node/v22.12.0/lib/node_modules/cdk-dia/icons/aws/Service/Arch_App-Integration/Arch_64/Arch_AWS-Simple-Notification-Service_64@5x.png",
+        imagescale = "true",
+        imagepos = "tc",
+        penwidth = "0",
+        shape = "node",
+        fixedsize = "true",
+        labelloc = "b",
+        width = 2,
+        height = 2.266,
+      ];
+      "LampStackArchitectureStack/LAMP_LAB_HighCPUAlarm" [
+        label = "\nLAMP_LAB_HighCPUAlarm",
+        fontsize = 12,
+        image = "/Users/admin/.nvm/versions/node/v22.12.0/lib/node_modules/cdk-dia/icons/aws/Service/Arch_Management-Governance/64/Arch_Amazon-CloudWatch_64@5x.png",
+        imagescale = "true",
+        imagepos = "tc",
+        penwidth = "0",
+        shape = "node",
+        fixedsize = "true",
+        labelloc = "b",
+        width = 1.2,
+        height = 1.682,
+      ];
+      "LampStackArchitectureStack/LAMP_LAB_LowCPUCreditsAlarm" [
+        label = " LAMP LAB\nLowCPUCreditsAlarm",
+        fontsize = 12,
+        image = "/Users/admin/.nvm/versions/node/v22.12.0/lib/node_modules/cdk-dia/icons/aws/Service/Arch_Management-Governance/64/Arch_Amazon-CloudWatch_64@5x.png",
+        imagescale = "true",
+        imagepos = "tc",
+        penwidth = "0",
+        shape = "node",
+        fixedsize = "true",
+        labelloc = "b",
+        width = 1.2,
+        height = 1.682,
+      ];
+      "LampStackArchitectureStack/LAMP_LAB_DBHighCPUAlarm" [
+        label = " LAMP LAB\nDBHighCPUAlarm",
+        fontsize = 12,
+        image = "/Users/admin/.nvm/versions/node/v22.12.0/lib/node_modules/cdk-dia/icons/aws/Service/Arch_Management-Governance/64/Arch_Amazon-CloudWatch_64@5x.png",
+        imagescale = "true",
+        imagepos = "tc",
+        penwidth = "0",
+        shape = "node",
+        fixedsize = "true",
+        labelloc = "b",
+        width = 1.2,
+        height = 1.682,
+      ];
+      "LampStackArchitectureStack/LAMP_LAB_DBLowStorageAlarm" [
+        label = " LAMP LAB\nDBLowStorageAlarm",
+        fontsize = 12,
+        image = "/Users/admin/.nvm/versions/node/v22.12.0/lib/node_modules/cdk-dia/icons/aws/Service/Arch_Management-Governance/64/Arch_Amazon-CloudWatch_64@5x.png",
+        imagescale = "true",
+        imagepos = "tc",
+        penwidth = "0",
+        shape = "node",
+        fixedsize = "true",
+        labelloc = "b",
+        width = 1.2,
+        height = 1.682,
+      ];
+      "LampStackArchitectureStack/LAMP_LAB_DBConnectionsAlarm" [
+        label = " LAMP LAB\nDBConnectionsAlarm",
+        fontsize = 12,
+        image = "/Users/admin/.nvm/versions/node/v22.12.0/lib/node_modules/cdk-dia/icons/aws/Service/Arch_Management-Governance/64/Arch_Amazon-CloudWatch_64@5x.png",
+        imagescale = "true",
+        imagepos = "tc",
+        penwidth = "0",
+        shape = "node",
+        fixedsize = "true",
+        labelloc = "b",
+        width = 1.2,
+        height = 1.682,
+      ];
+      "LampStackArchitectureStack/LAMP_LAB_ALBLatencyAlarm" [
+        label = " LAMP LAB\nALBLatencyAlarm",
+        fontsize = 12,
+        image = "/Users/admin/.nvm/versions/node/v22.12.0/lib/node_modules/cdk-dia/icons/aws/Service/Arch_Management-Governance/64/Arch_Amazon-CloudWatch_64@5x.png",
+        imagescale = "true",
+        imagepos = "tc",
+        penwidth = "0",
+        shape = "node",
+        fixedsize = "true",
+        labelloc = "b",
+        width = 1.2,
+        height = 1.682,
+      ];
+      "LampStackArchitectureStack/LAMP_LAB_ALB5XXAlarm" [
+        label = " LAMP_LAB_ALB5XXAlarm",
+        fontsize = 12,
+        image = "/Users/admin/.nvm/versions/node/v22.12.0/lib/node_modules/cdk-dia/icons/aws/Service/Arch_Management-Governance/64/Arch_Amazon-CloudWatch_64@5x.png",
+        imagescale = "true",
+        imagepos = "tc",
+        penwidth = "0",
+        shape = "node",
+        fixedsize = "true",
+        labelloc = "b",
+        width = 1.2,
+        height = 1.466,
+      ];
+      subgraph "cluster-SubGraph.LAMP_LAB_AutoScalingGroup" {
+        graph [
+          label = "LAMP_LAB_AutoScalingGroup",
+          labelloc = "b",
+          labeljust = "l",
+          margin = "10",
+          fontsize = "16",
+          penwidth = "2",
+          pencolor = "#888888",
+          style = "filled,rounded",
+          fillcolor = "#d6d6d6",
+        ];
+        "LampStackArchitectureStack/LAMP_LAB_AutoScalingGroup/InstanceRole" [
+          label = " InstanceRole",
+          fontsize = 12,
+          image = "/Users/admin/.nvm/versions/node/v22.12.0/lib/node_modules/cdk-dia/icons/aws/Service/Arch_Security-Identity-Compliance/64/Arch_AWS-Identity-and-Access-Management_64@5x.png",
+          imagescale = "true",
+          imagepos = "tc",
+          penwidth = "0",
+          shape = "node",
+          fixedsize = "true",
+          labelloc = "b",
+          width = 1.2,
+          height = 1.466,
+        ];
+        "LampStackArchitectureStack/LAMP_LAB_AutoScalingGroup/InstanceProfile" [
+          label = " IAM InstanceProfile\nInstanceProfile",
+          fontsize = 12,
+          image = "/Users/admin/.nvm/versions/node/v22.12.0/lib/node_modules/cdk-dia/icons/aws/Resource/Res_Security-Identity-and-Compliance/Res_48_Dark/Res_AWS-Identity-Access-Management_Permissions_48_Dark_gen.png",
+          imagescale = "true",
+          imagepos = "tc",
+          penwidth = "0",
+          shape = "node",
+          fixedsize = "true",
+          labelloc = "b",
+          width = 2,
+          height = 2.4819999999999998,
+        ];
+        "LampStackArchitectureStack/LAMP_LAB_AutoScalingGroup/LaunchTemplate" [
+          label = " LaunchTemplate",
+          fontsize = 12,
+        ];
+        "LampStackArchitectureStack/LAMP_LAB_AutoScalingGroup/ASG" [
+          label = " AutoScaling\nAutoScalingGroup ASG",
+          fontsize = 12,
+          image = "/Users/admin/.nvm/versions/node/v22.12.0/lib/node_modules/cdk-dia/icons/aws/Service/Arch_Compute/64/Arch_Amazon-EC2-Auto-Scaling_64@5x.png",
+          imagescale = "true",
+          imagepos = "tc",
+          penwidth = "0",
+          shape = "node",
+          fixedsize = "true",
+          labelloc = "b",
+          width = 2,
+          height = 2.4819999999999998,
+        ];
+        "LampStackArchitectureStack/LAMP_LAB_AutoScalingGroup/ScalingPolicyCpuScaling" [
+          label = "\nScalingPolicyCpuScali",
+          fontsize = 12,
+          image = "/Users/admin/.nvm/versions/node/v22.12.0/lib/node_modules/cdk-dia/icons/aws/Service/Arch_Compute/64/Arch_Amazon-EC2-Auto-Scaling_64@5x.png",
+          imagescale = "true",
+          imagepos = "tc",
+          penwidth = "0",
+          shape = "node",
+          fixedsize = "true",
+          labelloc = "b",
+          width = 1.2,
+          height = 1.682,
+        ];
+      }
+    }
+  }
+  "LampStackArchitectureStack/LAMP_LAB_LoadBalancerSG" -> "LampStackArchitectureStack/LampVPC" [
+    dir = "both",
+  ];
+  "LampStackArchitectureStack/LAMP_LAB_WebServerSG" -> "LampStackArchitectureStack/LampVPC" [
+    dir = "both",
+  ];
+  "LampStackArchitectureStack/LAMP_LAB_WebServerSG" -> "LampStackArchitectureStack/LAMP_LAB_LoadBalancerSG" [
+    dir = "both",
+  ];
+  "LampStackArchitectureStack/LAMP_LAB_DatabaseSG" -> "LampStackArchitectureStack/LampVPC" [
+    dir = "both",
+  ];
+  "LampStackArchitectureStack/LAMP_LAB_DatabaseSG" -> "LampStackArchitectureStack/LAMP_LAB_WebServerSG" [
+    dir = "both",
+  ];
+  "LampStackArchitectureStack/LAMP_LAB_Database" -> "LampStackArchitectureStack/LampVPC" [
+    dir = "both",
+  ];
+  "LampStackArchitectureStack/LAMP_LAB_Database" -> "LampStackArchitectureStack/LAMP_LAB_DatabaseSG" [
+    dir = "both",
+  ];
+  "LampStackArchitectureStack/LAMP_LAB_LoadBalancer" -> "LampStackArchitectureStack/LampVPC" [
+    dir = "both",
+  ];
+  "LampStackArchitectureStack/LAMP_LAB_LoadBalancer" -> "LampStackArchitectureStack/LAMP_LAB_LoadBalancerSG" [
+    dir = "both",
+  ];
+  "LampStackArchitectureStack/LAMP_LAB_AutoScalingGroup/InstanceProfile" -> "LampStackArchitectureStack/LAMP_LAB_AutoScalingGroup/InstanceRole" [
+    dir = "both",
+  ];
+  "LampStackArchitectureStack/LAMP_LAB_AutoScalingGroup/LaunchTemplate" -> "LampStackArchitectureStack/LAMP_LAB_AutoScalingGroup/InstanceProfile" [
+    dir = "both",
+  ];
+  "LampStackArchitectureStack/LAMP_LAB_AutoScalingGroup/LaunchTemplate" -> "LampStackArchitectureStack/LAMP_LAB_WebServerSG" [
+    dir = "both",
+  ];
+  "LampStackArchitectureStack/LAMP_LAB_AutoScalingGroup/LaunchTemplate" -> "LampStackArchitectureStack/LAMP_LAB_Database" [
+    dir = "both",
+  ];
+  "LampStackArchitectureStack/LAMP_LAB_AutoScalingGroup/ASG" -> "LampStackArchitectureStack/LampVPC" [
+    dir = "both",
+  ];
+  "LampStackArchitectureStack/LAMP_LAB_AutoScalingGroup/ASG" -> "LampStackArchitectureStack/LAMP_LAB_LoadBalancer" [
+    dir = "both",
+  ];
+  "LampStackArchitectureStack/LAMP_LAB_AutoScalingGroup/ASG" -> "LampStackArchitectureStack/LAMP_LAB_AutoScalingGroup/LaunchTemplate" [
+    dir = "both",
+  ];
+  "LampStackArchitectureStack/LAMP_LAB_AutoScalingGroup/ScalingPolicyCpuScaling" -> "LampStackArchitectureStack/LAMP_LAB_AutoScalingGroup/ASG" [
+    dir = "both",
+  ];
+  "LampStackArchitectureStack/LAMP_LAB_HighCPUAlarm" -> "LampStackArchitectureStack/LAMP_LAB_AutoScalingGroup/ASG" [
+    dir = "both",
+  ];
+  "LampStackArchitectureStack/LAMP_LAB_HighCPUAlarm" -> "LampStackArchitectureStack/LAMP_LAB_AlarmTopic" [
+    dir = "both",
+  ];
+  "LampStackArchitectureStack/LAMP_LAB_LowCPUCreditsAlarm" -> "LampStackArchitectureStack/LAMP_LAB_AutoScalingGroup/ASG" [
+    dir = "both",
+  ];
+  "LampStackArchitectureStack/LAMP_LAB_LowCPUCreditsAlarm" -> "LampStackArchitectureStack/LAMP_LAB_AlarmTopic" [
+    dir = "both",
+  ];
+  "LampStackArchitectureStack/LAMP_LAB_DBHighCPUAlarm" -> "LampStackArchitectureStack/LAMP_LAB_Database" [
+    dir = "both",
+  ];
+  "LampStackArchitectureStack/LAMP_LAB_DBHighCPUAlarm" -> "LampStackArchitectureStack/LAMP_LAB_AlarmTopic" [
+    dir = "both",
+  ];
+  "LampStackArchitectureStack/LAMP_LAB_DBLowStorageAlarm" -> "LampStackArchitectureStack/LAMP_LAB_Database" [
+    dir = "both",
+  ];
+  "LampStackArchitectureStack/LAMP_LAB_DBLowStorageAlarm" -> "LampStackArchitectureStack/LAMP_LAB_AlarmTopic" [
+    dir = "both",
+  ];
+  "LampStackArchitectureStack/LAMP_LAB_DBConnectionsAlarm" -> "LampStackArchitectureStack/LAMP_LAB_Database" [
+    dir = "both",
+  ];
+  "LampStackArchitectureStack/LAMP_LAB_DBConnectionsAlarm" -> "LampStackArchitectureStack/LAMP_LAB_AlarmTopic" [
+    dir = "both",
+  ];
+  "LampStackArchitectureStack/LAMP_LAB_ALBLatencyAlarm" -> "LampStackArchitectureStack/LAMP_LAB_LoadBalancer" [
+    dir = "both",
+  ];
+  "LampStackArchitectureStack/LAMP_LAB_ALBLatencyAlarm" -> "LampStackArchitectureStack/LAMP_LAB_AlarmTopic" [
+    dir = "both",
+  ];
+  "LampStackArchitectureStack/LAMP_LAB_ALB5XXAlarm" -> "LampStackArchitectureStack/LAMP_LAB_LoadBalancer" [
+    dir = "both",
+  ];
+  "LampStackArchitectureStack/LAMP_LAB_ALB5XXAlarm" -> "LampStackArchitectureStack/LAMP_LAB_AlarmTopic" [
+    dir = "both",
+  ];
+}
