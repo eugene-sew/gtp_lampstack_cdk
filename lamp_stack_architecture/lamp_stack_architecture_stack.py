@@ -9,6 +9,7 @@ from aws_cdk import (
     aws_cloudwatch as cloudwatch,
     aws_cloudwatch_actions as cloudwatch_actions,
     aws_sns as sns,
+    aws_secretsmanager as secretsmanager,
     CfnOutput,
     RemovalPolicy,
     Tags,
@@ -113,7 +114,7 @@ class LampStackArchitectureStack(Stack):
             "Allow MySQL traffic from the web servers"
         )
         
-        # Create RDS MySQL Instance
+        # Create RDS MySQL Instance with credentials in Secrets Manager
         database = rds.DatabaseInstance(
             self, "LAMP_LAB_Database",
             engine=rds.DatabaseInstanceEngine.mysql(
@@ -136,6 +137,12 @@ class LampStackArchitectureStack(Stack):
             backup_retention=Duration.days(7),
             deletion_protection=False,
             removal_policy=RemovalPolicy.SNAPSHOT
+        )
+        
+        # Get the auto-generated secret with database credentials
+        db_secret = secretsmanager.Secret.from_secret_name_v2(
+            self, "DBSecret",
+            secret_name=database.secret.secret_name
         )
         
         # Add tags to database
@@ -168,13 +175,18 @@ class LampStackArchitectureStack(Stack):
         user_data = ec2.UserData.for_linux()
         user_data.add_commands(
             "yum update -y",  # Amazon Linux 2
+            # Install AWS CLI v2
+            "curl \"https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip\" -o \"awscliv2.zip\"",
+            "yum install -y unzip",
+            "unzip awscliv2.zip",
+            "./aws/install",
             # PHP 8.0 installation
             "amazon-linux-extras | grep php",  # Check available PHP versions
             "sudo yum remove php* -y",  # Remove existing PHP
             "sudo yum clean all",
             "sudo amazon-linux-extras enable php8.0",  # Enable PHP 8.0
             "sudo yum clean metadata",
-            "sudo yum install -q -y php-cli php-fpm php-opcache php-common php-mysqlnd httpd mariadb-server git",
+            "sudo yum install -q -y php-cli php-fpm php-opcache php-common php-mysqlnd httpd mariadb-server git jq",
             # Start and enable services
             "systemctl start httpd",
             "systemctl enable httpd",
@@ -183,6 +195,20 @@ class LampStackArchitectureStack(Stack):
             # Output PHP version for verification
             "echo 'PHP version installed:' > /var/www/html/php-version.txt",
             "php -v >> /var/www/html/php-version.txt",
+            # Create app directory structure
+            "mkdir -p /var/www/html/lamp/config",
+            # Retrieve DB credentials from Secrets Manager and create .env file
+            f"SECRET=$(aws secretsmanager get-secret-value --secret-id {database.secret.secret_name} --region ${{AWS::Region}} --query SecretString --output text)",
+            "touch /var/www/html/lamp/.env",
+            "echo \"DB_HOST=$(echo $SECRET | jq -r '.host')\" >> /var/www/html/lamp/.env",
+            "echo \"DB_USER=$(echo $SECRET | jq -r '.username')\" >> /var/www/html/lamp/.env",
+            "echo \"DB_PASS=$(echo $SECRET | jq -r '.password')\" >> /var/www/html/lamp/.env",
+            "echo \"DB_NAME=lampapp\" >> /var/www/html/lamp/.env",
+            # Set proper permissions
+            "chown -R apache:apache /var/www/html/lamp",
+            "chmod 640 /var/www/html/lamp/.env",
+            # Create db_config.php file
+            "cp /var/www/html/lamp/config/db_config.php /var/www/html/lamp/config/db_config.php.bak 2>/dev/null || echo 'No config file to backup'",
             # Clone the GitHub repository if provided
             f"if [ ! -z '{self.github_repo_url}' ]; then",
             f"  git clone {self.github_repo_url} /var/www/html/",
@@ -206,6 +232,18 @@ class LampStackArchitectureStack(Stack):
             "\n?>' > /var/www/html/db-test.php",
         )
         
+        # Create IAM role for EC2 instances to access Secrets Manager
+        web_server_role = iam.Role(
+            self, "WebServerRole",
+            assumed_by=iam.ServicePrincipal("ec2.amazonaws.com")
+        )
+        
+        # Add policy to access the specific secret
+        web_server_role.add_to_policy(iam.PolicyStatement(
+            actions=["secretsmanager:GetSecretValue"],
+            resources=[db_secret.secret_arn]
+        ))
+        
         # Create Auto Scaling Group with EC2 instances
         self.asg = autoscaling.AutoScalingGroup(
             self, "LAMP_LAB_AutoScalingGroup",
@@ -225,7 +263,8 @@ class LampStackArchitectureStack(Stack):
             desired_capacity=2,
             min_capacity=2,
             max_capacity=4,
-            key_name="LAMP_kp"
+            key_name="LAMP_kp",
+            role=web_server_role  # Assign IAM role to instances
         )
         self.asg.health_check_grace_period = Duration.minutes(5)
         
@@ -270,6 +309,13 @@ class LampStackArchitectureStack(Stack):
             self, "DatabaseEndpoint",
             value=database.db_instance_endpoint_address,
             description="The endpoint of the database"
+        )
+        
+        # Output the Secrets Manager secret name
+        CfnOutput(
+            self, "DatabaseSecretName",
+            value=database.secret.secret_name,
+            description="The name of the secret containing database credentials"
         )
         
         # Create an SNS topic for CloudWatch alarms
