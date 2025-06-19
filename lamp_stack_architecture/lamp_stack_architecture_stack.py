@@ -18,7 +18,7 @@ from constructs import Construct
 
 class LampStackArchitectureStack(Stack):
 
-    def __init__(self, scope: Construct, construct_id: str, github_repo_url: str = None, **kwargs) -> None:
+    def __init__(self, scope: Construct, construct_id: str, github_repo_url: str = "https://github.com/eugene-sew/gtp_lampstack_lab_app.git", **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
         # Tagging
@@ -171,77 +171,168 @@ class LampStackArchitectureStack(Stack):
             open=True
         )
         
-        # Create user data for EC2 instances
-        user_data = ec2.UserData.for_linux()
-        user_data.add_commands(
-            "yum update -y",  # Amazon Linux 2
-            # Install AWS CLI v2
-            "curl \"https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip\" -o \"awscliv2.zip\"",
-            "yum install -y unzip",
-            "unzip awscliv2.zip",
-            "./aws/install",
-            # PHP 8.0 installation
-            "amazon-linux-extras | grep php",  # Check available PHP versions
-            "sudo yum remove php* -y",  # Remove existing PHP
-            "sudo yum clean all",
-            "sudo amazon-linux-extras enable php8.0",  # Enable PHP 8.0
-            "sudo yum clean metadata",
-            "sudo yum install -q -y php-cli php-fpm php-opcache php-common php-mysqlnd httpd mariadb-server git jq",
-            # Start and enable services
-            "systemctl start httpd",
-            "systemctl enable httpd",
-            "systemctl start mariadb",
-            "systemctl enable mariadb",
-            # Output PHP version for verification
-            "echo 'PHP version installed:' > /var/www/html/php-version.txt",
-            "php -v >> /var/www/html/php-version.txt",
-            # Create app directory structure
-            "mkdir -p /var/www/html/lamp/config",
-            # Retrieve DB credentials from Secrets Manager and create .env file
-            f"SECRET=$(aws secretsmanager get-secret-value --secret-id {database.secret.secret_name} --region ${{AWS::Region}} --query SecretString --output text)",
-            "touch /var/www/html/lamp/.env",
-            "echo \"DB_HOST=$(echo $SECRET | jq -r '.host')\" >> /var/www/html/lamp/.env",
-            "echo \"DB_USER=$(echo $SECRET | jq -r '.username')\" >> /var/www/html/lamp/.env",
-            "echo \"DB_PASS=$(echo $SECRET | jq -r '.password')\" >> /var/www/html/lamp/.env",
-            "echo \"DB_NAME=lampapp\" >> /var/www/html/lamp/.env",
-            # Set proper permissions
-            "chown -R apache:apache /var/www/html/lamp",
-            "chmod 640 /var/www/html/lamp/.env",
-            # Create db_config.php file
-            "cp /var/www/html/lamp/config/db_config.php /var/www/html/lamp/config/db_config.php.bak 2>/dev/null || echo 'No config file to backup'",
-            # Clone the GitHub repository if provided
-            f"if [ ! -z '{self.github_repo_url}' ]; then",
-            f"  git clone {self.github_repo_url} /var/www/html/",
-            "else",
-            "  echo '<html><body><h1>LAMP Stack is running!</h1></body></html>' > /var/www/html/index.html",
-            "fi",
-            # Create a PHP test file to verify database connection
-            "echo '<?php" +
-            "\n  $servername = \"" + database.db_instance_endpoint_address + "\";" +
-            "\n  $username = \"admin\";" +
-            "\n  $password = \"PLACEHOLDER_PASSWORD\";" +  # Will be replaced during deployment
-            "\n  $dbname = \"lampapp\";" +
-            "\n  // Create connection" +
-            "\n  $conn = new mysqli($servername, $username, $password, $dbname);" +
-            "\n  // Check connection" +
-            "\n  if ($conn->connect_error) {" +
-            "\n    die(\"Connection failed: \" . $conn->connect_error);" +
-            "\n  }" +
-            "\n  $conn->set_charset(\"utf8\");" +
-            "\n  echo \"Connected successfully\";" +
-            "\n?>' > /var/www/html/db-test.php",
-        )
+        # Create user data script
+        user_data_script = '#!/bin/bash\nset -e  # Exit immediately if a command exits with a non-zero status.\nset -x  # Print commands and their arguments as they are executed.\n'
+        user_data_script += 'exec > /var/log/user-data.log 2>&1\n'
+        user_data_script += 'echo "Starting user data script execution"\n'
+        user_data_script += 'yum update -y\n'
+        user_data_script += 'yum install -y jq git unzip httpd mariadb\n'
         
-        # Create IAM role for EC2 instances to access Secrets Manager
+        # Install AWS CLI v2
+        user_data_script += 'echo "Installing AWS CLI v2"\n'
+        user_data_script += 'curl -s "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"\n'
+        user_data_script += 'unzip -q awscliv2.zip\n'
+        user_data_script += './aws/install\n'
+        
+        # Install PHP 8.0
+        user_data_script += 'echo "Installing PHP 8.0"\n'
+        user_data_script += 'amazon-linux-extras | grep php\n'
+        user_data_script += 'yum remove -y php* || true\n'
+        user_data_script += 'yum clean all\n'
+        user_data_script += 'amazon-linux-extras enable php8.0\n'
+        user_data_script += 'yum clean metadata\n'
+        user_data_script += 'yum install -y php-cli php-fpm php-opcache php-common php-mysqlnd php-json\n'
+        
+        # Start services
+        user_data_script += 'systemctl start httpd\n'
+        user_data_script += 'systemctl enable httpd\n'
+        
+        # Clean web root and clone repository directly
+        user_data_script += 'echo "Cleaning /var/www/html/ directory..."\n'
+        user_data_script += 'rm -rf /var/www/html/* /var/www/html/.* || true # Remove all files and hidden files, ignore errors if dir is empty\n'
+        user_data_script += 'echo "Cloning repository directly into /var/www/html/..."\n'
+        user_data_script += f'if git clone {self.github_repo_url} /var/www/html/; then\n'
+        user_data_script += '  echo "Repository cloned successfully into /var/www/html/."\n'
+        user_data_script += 'else\n'
+        user_data_script += '  GIT_CLONE_EXIT_CODE=$?\n'
+        user_data_script += '  echo "Failed to clone repository directly into /var/www/html/ (Exit Code: $GIT_CLONE_EXIT_CODE). Creating fallback page."\n'
+        user_data_script += '  # Attempt to clean up again in case of partial clone before writing fallback\n'
+        user_data_script += '  rm -rf /var/www/html/* /var/www/html/.* || true\n'
+        user_data_script += '  echo "<html><body><h1>LAMP Stack is running!</h1><p>Failed to clone repository. Git Exit Code: $GIT_CLONE_EXIT_CODE</p></body></html>" > /var/www/html/index.html\n'
+        user_data_script += 'fi\n'
+        
+        # Get region from instance metadata
+        user_data_script += 'echo "Getting instance region and secret name."\n'
+        user_data_script += 'AWS_REGION=$(curl -s http://169.254.169.254/latest/meta-data/placement/region)\n'
+        user_data_script += f'SECRET_NAME="{database.secret.secret_name}"\n'
+        user_data_script += 'echo "Region: $AWS_REGION, Secret Name: $SECRET_NAME"\n'
+        
+        # Retrieve DB credentials from Secrets Manager with retry logic
+        user_data_script += 'MAX_RETRIES=5\n'
+        user_data_script += 'for ((i=1; i<=MAX_RETRIES; i++)); do\n'
+        user_data_script += '  echo "Attempt $i of $MAX_RETRIES to get secret."\n'
+        user_data_script += '  SECRET=$(aws secretsmanager get-secret-value --secret-id $SECRET_NAME --region $AWS_REGION --query SecretString --output text 2>/dev/null)\n'
+        user_data_script += '  if [ $? -eq 0 ] && [ ! -z "$SECRET" ]; then\n'
+        user_data_script += '    echo "Secret successfully retrieved."\n'
+        user_data_script += '    break\n'
+        user_data_script += '  else\n'
+        user_data_script += '    echo "Failed to retrieve secret, retrying in 10 seconds..."\n'
+        user_data_script += '    sleep 10\n'
+        user_data_script += '  fi\n'
+        user_data_script += 'done\n'
+        
+        # Clone GitHub repository
+        user_data_script += f'echo "Cloning repository: {self.github_repo_url}" > /var/www/html/git-clone.log\n'
+        user_data_script += 'rm -rf /tmp/lamp-source # Clean up temp dir before use\n'
+        user_data_script += 'mkdir -p /tmp/lamp-source\n'
+        user_data_script += f'git clone {self.github_repo_url} /tmp/lamp-source\n'
+        user_data_script += 'if [ $? -eq 0 ]; then\n'
+        user_data_script += '  echo "Repository cloned successfully to /tmp/lamp-source" >> /var/www/html/git-clone.log\n'
+        user_data_script += '  echo "Cleaning /var/www/html before copying new files..."\n'
+        user_data_script += '  rm -rf /var/www/html/*\n'
+        user_data_script += '  rm -rf /var/www/html/.* || true # Remove hidden files, ignore error if none except . and .. exist\n'
+        user_data_script += '  echo "Copying repository files to /var/www/html..."\n'
+        user_data_script += '  cp -r /tmp/lamp-source/* /var/www/html/ 2>/dev/null || true\n'
+        user_data_script += '  cp -r /tmp/lamp-source/.* /var/www/html/ 2>/dev/null || true\n'
+        user_data_script += '  rm -rf /tmp/lamp-source # Clean up temp dir after use\n'
+        user_data_script += 'else\n'
+        user_data_script += '  echo "Failed to clone repository" >> /var/www/html/git-clone.log\n'
+        user_data_script += '  echo "<html><body><h1>LAMP Stack is running!</h1><p>Failed to clone repository</p></body></html>" > /var/www/html/index.html\n'
+        user_data_script += 'fi\n'
+
+        # Create .env file
+        user_data_script += 'LAMP_APP_SUBDIR="/var/www/html/lamp" # For application structure like config files\n'
+        user_data_script += 'ENV_FILE_PATH="/var/www/html/.env"   # .env file in the web root\n'
+        user_data_script += 'echo "Ensuring application subdirectory $LAMP_APP_SUBDIR exists (e.g., for lamp/config/db_config.php)."\n'
+        user_data_script += 'mkdir -p $LAMP_APP_SUBDIR\n'
+
+        user_data_script += 'echo "Attempting to create .env file at $ENV_FILE_PATH"\n'
+        user_data_script += 'echo "Value of SECRET variable before parsing: [$SECRET]"\n'
+
+        user_data_script += 'if [ ! -z "$SECRET" ]; then\n'
+        user_data_script += '  echo "SECRET variable is not empty. Parsing and writing to .env file."\n'
+        user_data_script += '  DB_HOST_VAL=$(echo "$SECRET" | jq -r ".host")\n'
+        user_data_script += '  DB_USER_VAL=$(echo "$SECRET" | jq -r ".username")\n'
+        user_data_script += '  DB_PASS_VAL=$(echo "$SECRET" | jq -r ".password")\n'
+        user_data_script += '  echo "Parsed DB_HOST: [$DB_HOST_VAL]"\n'
+
+        user_data_script += '  if [ -z "$DB_HOST_VAL" ] || [ "$DB_HOST_VAL" == "null" ]; then echo "Warning: DB_HOST_VAL is empty or null after jq."; fi\n'
+
+        user_data_script += '  echo "DB_HOST=$DB_HOST_VAL" > $ENV_FILE_PATH\n'
+        user_data_script += '  echo "DB_USER=$DB_USER_VAL" >> $ENV_FILE_PATH\n'
+        user_data_script += '  echo "DB_PASS=$DB_PASS_VAL" >> $ENV_FILE_PATH\n'
+        user_data_script += 'else\n'
+        user_data_script += '  echo "SECRET variable IS EMPTY or retrieval failed. Using fallback database values for .env file."\n'
+        user_data_script += f'  echo "DB_HOST={database.db_instance_endpoint_address}" > $ENV_FILE_PATH\n'
+        user_data_script += '  echo "DB_USER=admin" >> $ENV_FILE_PATH\n'
+        user_data_script += '  echo "DB_PASS=password" >> $ENV_FILE_PATH\n'
+        user_data_script += 'fi\n'
+        user_data_script += 'echo "DB_NAME=lampapp" >> $ENV_FILE_PATH\n'
+
+        user_data_script += 'echo "Checking .env file content after creation:"\n'
+        user_data_script += 'cat $ENV_FILE_PATH || echo "Failed to cat $ENV_FILE_PATH or file is empty."\n'
+        user_data_script += 'echo "Finished .env file creation attempt."\n'
+
+        # Create a test PHP file
+        user_data_script += 'echo "Creating db-test.php..."\n'
+        user_data_script += 'cat > /var/www/html/db-test.php << \'EOF\'\n'
+        user_data_script += '<?php\n'
+        user_data_script += 'require_once "/var/www/html/lamp/config/db_config.php";\n\n'
+        user_data_script += 'echo "<h1>LAMP Stack Environment Test</h1>";\n'
+        user_data_script += 'echo "<h2>PHP Version: " . phpversion() . "</h2>";\n\n'
+        user_data_script += 'echo "<h2>Database Configuration:</h2>";\n'
+        user_data_script += 'echo "<p>Host: " . DB_HOST . "</p>";\n'
+        user_data_script += 'echo "<p>User: " . DB_USER . "</p>";\n'
+        user_data_script += 'echo "<p>Database: " . DB_NAME . "</p>";\n\n'
+        user_data_script += 'try {\n'
+        user_data_script += '    $conn = getDbConnection();\n'
+        user_data_script += '    echo "<h2 style=\'color:green\'>Database Connection Successful!</h2>";\n'
+        user_data_script += '} catch (Exception $e) {\n'
+        user_data_script += '    echo "<h2 style=\'color:red\'>Database Connection Failed!</h2>";\n'
+        user_data_script += '    echo "<p>Error: " . $e->getMessage() . "</p>";\n'
+        user_data_script += '}\n'
+        user_data_script += 'EOF\n'
+
+        # Set final permissions
+        user_data_script += 'echo "Setting final ownership and permissions..."\n'
+        user_data_script += 'chown -R apache:apache /var/www/html\n'
+        user_data_script += 'find /var/www/html -type d -exec chmod 755 {} \\; # General directory permissions\n'
+        user_data_script += 'find /var/www/html -type f -exec chmod 644 {} \\; # General file permissions\n'
+        user_data_script += 'if [ -f "$ENV_FILE_PATH" ]; then\n'
+        user_data_script += '  chmod 640 $ENV_FILE_PATH\n'
+        user_data_script += '  echo "Permissions specifically set for $ENV_FILE_PATH to 640."\n'
+        user_data_script += 'else\n'
+        user_data_script += '  echo "Warning: $ENV_FILE_PATH not found for final chmod 640."\n'
+        user_data_script += 'fi\n'
+        user_data_script += 'echo "User data script finished."\n'
+        
+        # Create user data from script
+        user_data = ec2.UserData.for_linux()
+        user_data.add_commands(user_data_script)
+        
+        # Create IAM role for EC2 instances with necessary permissions
         web_server_role = iam.Role(
             self, "WebServerRole",
             assumed_by=iam.ServicePrincipal("ec2.amazonaws.com")
         )
         
-        # Add policy to access the specific secret
+        # Grant the web server role permissions to read the database secret
+        database.secret.grant_read(web_server_role)
+        
+        # Add policy to allow EC2 instances to describe themselves (for instance metadata)
         web_server_role.add_to_policy(iam.PolicyStatement(
-            actions=["secretsmanager:GetSecretValue"],
-            resources=[db_secret.secret_arn]
+            actions=["ec2:DescribeInstances", "ec2:DescribeTags", "ec2:CreateTags"],
+            resources=["*"]
         ))
         
         # Create Auto Scaling Group with EC2 instances
@@ -336,7 +427,7 @@ class LampStackArchitectureStack(Stack):
             description="The ARN of the SNS topic for alarms"
         )
         
-        # Create CloudWatch alarms for key metrics
+        # CloudWatch alarms for key metrics
         
         # 1. High CPU Utilization Alarm for Auto Scaling Group
         high_cpu_alarm = cloudwatch.Alarm(
