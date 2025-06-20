@@ -47,6 +47,7 @@ Virtual firewalls enforce traffic rules:
 
   - Allows inbound HTTP (port 80) _only_ from the Load Balancer Security Group.
   - Allows inbound SSH (port 22) from anywhere (for development).
+  - Allows inbound SSH (port 22) from anywhere (for development).
   - Allows all outbound traffic (for updates, code cloning, AWS service access).
 
 - **Database Security Group (`LAMP_LAB_DatabaseSG`)**:
@@ -141,6 +142,21 @@ A suite of CloudWatch alarms provides real-time insight into system health and p
 6. **`LAMP_LAB_ALBLatencyAlarm`**: Triggers when ALB target response time exceeds 2 seconds.
 7. **`LAMP_LAB_ALB5XXAlarm`**: Triggers when ALB-generated 5XX errors exceed 10.
 
+### EC2 / Auto Scaling Group Alarms
+
+1. **`LAMP_LAB_HighCPUAlarm`**: Triggers when Auto Scaling Group CPU utilization exceeds 90%.
+2. **`LAMP_LAB_LowCPUCreditsAlarm`**: Triggers when EC2 CPU credit balance falls below 20 (for T3 instances).
+
+### RDS Database Alarms
+
+3. **`LAMP_LAB_DBHighCPUAlarm`**: Triggers when database CPU utilization exceeds 80%.
+4. **`LAMP_LAB_DBLowStorageAlarm`**: Triggers when database free storage is less than 2GB.
+5. **`LAMP_LAB_DBConnectionsAlarm`**: Triggers when database connections exceed 100 (threshold adjustable).
+
+### Application Load Balancer Alarms
+
+6. **`LAMP_LAB_ALBLatencyAlarm`**: Triggers when ALB target response time exceeds 2 seconds.
+7. **`LAMP_LAB_ALB5XXAlarm`**: Triggers when ALB-generated 5XX errors exceed 10.
 
 These alarms ensure that deviations from normal operational parameters are quickly identified and communicated.
 
