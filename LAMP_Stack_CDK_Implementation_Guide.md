@@ -128,8 +128,13 @@ A suite of CloudWatch alarms provides real-time insight into system health and p
 - **EC2 / Auto Scaling Group Alarms**:
   1.  **`LAMP_LAB_HighCPUAlarm`**: ASG CPU Utilization > 90%.
   2.  **`LAMP_LAB_LowCPUCreditsAlarm`**: EC2 CPU Credit Balance < 20 (for T3 instances).
-- **RDS Database Alarms**: 3. **`LAMP_LAB_DBHighCPUAlarm`**: Database CPU Utilization > 80%. 4. **`LAMP_LAB_DBLowStorageAlarm`**: Database Free Storage < 2GB. 5. **`LAMP_LAB_DBConnectionsAlarm`**: Database Connections > 100 (threshold adjustable).
-- **Application Load Balancer Alarms**: 6. **`LAMP_LAB_ALBLatencyAlarm`**: ALB Target Response Time > 2 seconds. 7. **`LAMP_LAB_ALB5XXAlarm`**: ALB-generated 5XX errors > 10.
+- **RDS Database Alarms**:
+  3. **`LAMP_LAB_DBHighCPUAlarm`**: Database CPU Utilization > 80%.
+  4. **`LAMP_LAB_DBLowStorageAlarm`**: Database Free Storage < 2GB.
+  5. **`LAMP_LAB_DBConnectionsAlarm`**: Database Connections > 100 (threshold adjustable).
+- **Application Load Balancer Alarms**:
+  6. **`LAMP_LAB_ALBLatencyAlarm`**: ALB Target Response Time > 2 seconds.
+  7. **`LAMP_LAB_ALB5XXAlarm`**: ALB-generated 5XX errors > 10.
 
 These alarms ensure that deviations from normal operational parameters are quickly identified and communicated.
 
@@ -138,8 +143,6 @@ These alarms ensure that deviations from normal operational parameters are quick
 - **Instance-Level Logging**:
   - **User Data Script Log**: `/var/log/user-data.log` on each EC2 instance captures the entire bootstrap process, crucial for diagnosing launch issues.
   - **Apache Logs**: Standard Apache access (`/var/log/httpd/access_log`) and error (`/var/log/httpd/error_log`) logs are available on each web server. These provide detailed insights into web requests and application-level errors.
-- **Potential for Centralized Logging (CloudWatch Logs)**:
-  - While not explicitly configured to stream to CloudWatch Logs in this version of the script, the AWS CloudWatch Agent can be installed on EC2 instances to forward Apache logs, application logs, and system logs to CloudWatch Logs. This would provide a centralized logging solution, fulfilling a key lab deliverable.
 - **RDS Logs**: RDS can be configured to publish its logs (error, slow query, general) to CloudWatch Logs for analysis.
 
 ### 4.4. Observability Tools & Practices
