@@ -129,12 +129,12 @@ A suite of CloudWatch alarms provides real-time insight into system health and p
   1.  **`LAMP_LAB_HighCPUAlarm`**: ASG CPU Utilization > 90%.
   2.  **`LAMP_LAB_LowCPUCreditsAlarm`**: EC2 CPU Credit Balance < 20 (for T3 instances).
 - **RDS Database Alarms**:
-  3. **`LAMP_LAB_DBHighCPUAlarm`**: Database CPU Utilization > 80%.
-  4. **`LAMP_LAB_DBLowStorageAlarm`**: Database Free Storage < 2GB.
-  5. **`LAMP_LAB_DBConnectionsAlarm`**: Database Connections > 100 (threshold adjustable).
+--3. **`LAMP_LAB_DBHighCPUAlarm`**: Database CPU Utilization > 80%.
+--4. **`LAMP_LAB_DBLowStorageAlarm`**: Database Free Storage < 2GB.
+--5. **`LAMP_LAB_DBConnectionsAlarm`**: Database Connections > 100 (threshold adjustable).
 - **Application Load Balancer Alarms**:
-  6. **`LAMP_LAB_ALBLatencyAlarm`**: ALB Target Response Time > 2 seconds.
-  7. **`LAMP_LAB_ALB5XXAlarm`**: ALB-generated 5XX errors > 10.
+--6. **`LAMP_LAB_ALBLatencyAlarm`**: ALB Target Response Time > 2 seconds.
+--7. **`LAMP_LAB_ALB5XXAlarm`**: ALB-generated 5XX errors > 10.
 
 These alarms ensure that deviations from normal operational parameters are quickly identified and communicated.
 
