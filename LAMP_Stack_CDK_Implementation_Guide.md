@@ -125,16 +125,22 @@ This section directly addresses the lab's requirements for monitoring, logging, 
 
 A suite of CloudWatch alarms provides real-time insight into system health and performance, triggering notifications via the SNS topic.
 
-- **EC2 / Auto Scaling Group Alarms**:
-  1.  **`LAMP_LAB_HighCPUAlarm`**: ASG CPU Utilization > 90%.
-  2.  **`LAMP_LAB_LowCPUCreditsAlarm`**: EC2 CPU Credit Balance < 20 (for T3 instances).
-- **RDS Database Alarms**:
---3. **`LAMP_LAB_DBHighCPUAlarm`**: Database CPU Utilization > 80%.
---4. **`LAMP_LAB_DBLowStorageAlarm`**: Database Free Storage < 2GB.
---5. **`LAMP_LAB_DBConnectionsAlarm`**: Database Connections > 100 (threshold adjustable).
-- **Application Load Balancer Alarms**:
---6. **`LAMP_LAB_ALBLatencyAlarm`**: ALB Target Response Time > 2 seconds.
---7. **`LAMP_LAB_ALB5XXAlarm`**: ALB-generated 5XX errors > 10.
+### EC2 / Auto Scaling Group Alarms
+
+1. **`LAMP_LAB_HighCPUAlarm`**: Triggers when Auto Scaling Group CPU utilization exceeds 90%.
+2. **`LAMP_LAB_LowCPUCreditsAlarm`**: Triggers when EC2 CPU credit balance falls below 20 (for T3 instances).
+
+### RDS Database Alarms
+
+3. **`LAMP_LAB_DBHighCPUAlarm`**: Triggers when database CPU utilization exceeds 80%.
+4. **`LAMP_LAB_DBLowStorageAlarm`**: Triggers when database free storage is less than 2GB.
+5. **`LAMP_LAB_DBConnectionsAlarm`**: Triggers when database connections exceed 100 (threshold adjustable).
+
+### Application Load Balancer Alarms
+
+6. **`LAMP_LAB_ALBLatencyAlarm`**: Triggers when ALB target response time exceeds 2 seconds.
+7. **`LAMP_LAB_ALB5XXAlarm`**: Triggers when ALB-generated 5XX errors exceed 10.
+
 
 These alarms ensure that deviations from normal operational parameters are quickly identified and communicated.
 
