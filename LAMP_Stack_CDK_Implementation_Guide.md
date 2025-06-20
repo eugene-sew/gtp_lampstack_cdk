@@ -46,7 +46,7 @@ Virtual firewalls enforce traffic rules:
 - **Web Server Security Group (`LAMP_LAB_WebServerSG`)**:
 
   - Allows inbound HTTP (port 80) _only_ from the Load Balancer Security Group.
-  - Allows inbound SSH (port 22) from anywhere (for development; restrict in production).
+  - Allows inbound SSH (port 22) from anywhere (for development).
   - Allows all outbound traffic (for updates, code cloning, AWS service access).
 
 - **Database Security Group (`LAMP_LAB_DatabaseSG`)**:
