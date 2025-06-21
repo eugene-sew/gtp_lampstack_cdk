@@ -106,4 +106,4 @@ cdk destroy
 - Multi-AZ RDS deployment for high availability
 - Application Load Balancer for traffic distribution
 
--- View implementation details at ![LAMP_STACK_CDK_IMPLEMENTATION](LAMP_Stack_CDK_Implementation.md)
+-- View implementation details at ![LAMP_STACK_CDK_IMPLEMENTATION](LAMP_Stack_CDK_Implementation_Guide.md)
