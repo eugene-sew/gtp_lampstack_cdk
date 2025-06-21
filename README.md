@@ -92,11 +92,6 @@ cdk destroy
 
 ---
 
-## Credits
-
-- **Infrastructure:** AWS CDK (Python)
-- **App:** See [`lamp`](lamp) directory
-- **Diagram:** ![architecture.png](images/architecture.png)
 
 ## Security Features
 
@@ -113,7 +108,6 @@ cdk destroy
 
 ## Monitoring and Maintenance
 
-The infrastructure includes CloudWatch metrics for monitoring. You can set up CloudWatch alarms for important metrics like CPU utilization, database connections, etc.
 
 ## Cost Considerations
 
