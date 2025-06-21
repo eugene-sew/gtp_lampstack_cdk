@@ -106,15 +106,4 @@ cdk destroy
 - Multi-AZ RDS deployment for high availability
 - Application Load Balancer for traffic distribution
 
-## Monitoring and Maintenance
-
-
-## Cost Considerations
-
-This architecture includes components that incur AWS charges:
-
-- EC2 instances in the Auto Scaling Group
-- RDS MySQL instance (Multi-AZ deployment)
-- Application Load Balancer
-- NAT Gateways for private subnet internet access
-- Data transfer
+-- View implementation details at ![LAMP_STACK_CDK_IMPLEMENTATION](LAMP_Stack_CDK_Implementation.md)
