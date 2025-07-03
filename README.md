@@ -2,7 +2,11 @@
 
 ![Architecture Diagram](architecture.png)
 
+
 ## Overview
+
+Live link: [http://lampst-lampl-2udxtygetodc-818854857.eu-west-1.elb.amazonaws.com/](http://lampst-lampl-2udxtygetodc-818854857.eu-west-1.elb.amazonaws.com)
+---
 
 This project provisions a **scalable, secure, and highly available LAMP stack** (Linux, Apache, MySQL, PHP) on AWS using the AWS Cloud Development Kit (CDK) in Python. The stack is designed following AWS Well-Architected Framework best practices for reliability, security, and maintainability.
 
