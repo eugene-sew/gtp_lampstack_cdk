@@ -1,6 +1,6 @@
 # LAMP Stack AWS CDK Infrastructure
 
-![Architecture Diagram](images/architecture.png)
+![Architecture Diagram](architecture.png)
 
 ## Overview
 
